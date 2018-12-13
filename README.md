@@ -1,4 +1,28 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+12/12/18 TODO
+
+Button Configuration
+
+tieProtocol intergration, rand2
+
+display winner, and take a brief pause 
+
+display round winner, add button to start next round
+
+space out timing of cards being dealt
+
+
+CSS{
+images: smaller;
+alignment of images: across the screen;
+computers cards: find pokemon card backs to display for computron;
+}
+
+
+rule page
+
+add pokemon
+
+create user with backend
 
 ## Available Scripts
 
