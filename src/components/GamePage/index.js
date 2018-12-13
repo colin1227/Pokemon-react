@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import ReactTimeout, { setTimeout} from "react-timeout";
-
+import 'index.css'
  class Game extends Component {
     constructor(){
         super()
@@ -9,7 +9,7 @@ import ReactTimeout, { setTimeout} from "react-timeout";
         this.tick = this.tick.bind(this);
         this.randComp = this.randComp.bind(this);
         this.compChoice = this.compChoice.bind(this);
-        this.coadfa = this.coadfa.bind(this);
+        this.middle = this.middle.bind(this);
         this.state = {
             username: "nothing for now",
             userCards: [],
@@ -24,9 +24,10 @@ import ReactTimeout, { setTimeout} from "react-timeout";
             compWins: 0,
             compRoundsWon: 0,
             compSubmission: null,
+            compSelected: false,
             
             go: undefined,
-            time: 5,
+            time: 10,
             dispersed: false,
             error: "",
             winner: "",
@@ -64,11 +65,11 @@ import ReactTimeout, { setTimeout} from "react-timeout";
                     damage: 60
                 }, {
                     name: "Nidoran - female",
-                    img: "http://img.pokemondb.net/artwork/squirtle.jpg",
+                    img: "http://img.pokemondb.net/artwork/nidoran-f.jpg",
                     damage: 60
                 }, {
                     name: "Nidoran - male",
-                    img: "http://img.pokemondb.net/artwork/squirtle.jpg",
+                    img: "http://img.pokemondb.net/artwork/nidoran-m.jpg",
                     damage: 50
                 }, {
                     name: "Oddish",
@@ -110,31 +111,33 @@ import ReactTimeout, { setTimeout} from "react-timeout";
         }
     }
     compareDamage = async (choiceOfUser, computerChoice) => {
+        console.log(choiceOfUser, computerChoice)
         try{
-            console.log(choiceOfUser, "user damage")
-            console.log(computerChoice, "comp choice")
-            if (this.state.userCards.length === 0) {
-                this.rand6();
-            }
-    
-            else if (this.state.userCards.length > 0) {
+        
+            if (this.state.userCards.length > 0) {
                 if (this.state.userCards[choiceOfUser].damage > this.state.compCards[computerChoice].damage) {
                    await this.setState({
+                        time: 10,
                         userWins: this.state.userWins +1,
                         userCards: this.state.userCards.filter( used => this.state.userCards[choiceOfUser] !== used),
                         playedCards: [...this.state.playedCards, this.state.userCards[choiceOfUser]],
                         compCards: this.state.compCards.filter( used => this.state.compCards[computerChoice] !== used)
 
                     })
-
+                    if (this.state.userCards.length === 0) {
+                        this.rand6();
+                    }
+                    this.randComp();
                     if (this.state.userWins === 3) {
                        await this.setState({
+                            time: 10,
                             userRoundsWon: this.state.userRoundsWon + 1,
                             userWins: 0,
                             compWins: 0,
                             userCards: [],
                             compCards: []
                         })
+                        
                         if (this.state.userRoundsWon === 3) {
                             this.setState({
                                 winner: this.state.username
@@ -144,17 +147,23 @@ import ReactTimeout, { setTimeout} from "react-timeout";
                 }
                 else if (this.state.userCards[choiceOfUser].damage < this.state.compCards[computerChoice].damage) {
                     await this.setState({
+                        time: 10,
                         compWins: this.state.compWins +1,
                         userCards: this.state.userCards.filter( used => this.state.userCards[choiceOfUser] !== used),
                         playedCards: [...this.state.playedCards, this.state.userCards[choiceOfUser]],
                         compCards: this.state.compCards.filter( used => this.state.compCards[computerChoice] !== used)
 
                     })
+                    if (this.state.userCards.length === 0) {
+                        this.rand6();
+                    }
+                    this.randComp();
                     if (this.state.compWins === 3) {
                         await this.setState({
                             compRoundsWon: this.state.compRoundsWon + 1,
                             userWins: 0,
                             compWins: 0,
+                            time: 10,
                             userCards: [],
                             compCards: []
                         })
@@ -171,9 +180,10 @@ import ReactTimeout, { setTimeout} from "react-timeout";
                 //else if computer and Ash tie run tieProtocol
                 else if (this.state.userCards[choiceOfUser].damage === this.state.compCards[computerChoice].damage) {
                     await this.setState({
-                        userCards: this.state.userCards.filter( used => this.state.userCards[choiceOfUser] === used),
+                        time: 10,
+                        userCards: this.state.userCards.filter( used => this.state.userCards[choiceOfUser] !== used),
                         playedCards: [...this.state.playedCards, this.state.userCards[choiceOfUser]],
-                        compCards: this.state.compCards.filter( used => this.state.compCards[computerChoice] === used)
+                        compCards: this.state.compCards.filter( used => this.state.compCards[computerChoice] !== used)
                     })
                     this.tieProtocol();
                 }
@@ -181,7 +191,6 @@ import ReactTimeout, { setTimeout} from "react-timeout";
                     this.setState({
                         error: "something has gone terribly wrong"
                     })
-                    console.log("something has gone terribly wrong");
                     return;
                 };
             };
@@ -190,25 +199,23 @@ import ReactTimeout, { setTimeout} from "react-timeout";
            console.log(err)
        }
     };
+    tieProtocol = () =>{
+        this.rand2();
+        clearInterval(this.state.go)
+        this.count();
+    }
     
-    
+    roundwinner = () => {
+        clearInterval(this.state.go)
+        this.setState({
+            time: 10
+        })
+    }
 
-    makeChoice = async(e) =>{
-
-        if(this.state.choice !== false){
-           if(this.state.compSubmission !== undefined){
-            this.compareDamage(this.state.choice, this.state.compSubmission)
-           }
-           else{
-            console.log("again")
-            this.makeChoice()
-            
-           }
-        }
-
-        else{
-          return this.state.userCards[0]
-        }
+    gameWinner = (winner) =>{
+        this.setState({
+            winner: winner
+        })
     }
 
     rand6 = async() => {
@@ -234,7 +241,6 @@ import ReactTimeout, { setTimeout} from "react-timeout";
                 }) 
             }
             else if (this.state.compCards.length < 3) {
-                console.log("computron")
                 await this.setState({
                     compCards: [...this.state.compCards, this.state.pokemon[rand18]],
                     checkCards: [...this.state.checkCards, this.state.pokemon[rand18]]
@@ -251,41 +257,42 @@ import ReactTimeout, { setTimeout} from "react-timeout";
       }
     };
 
-    handleInput = async(e) =>{
-    console.log(e.currentTarget.value)
-      try{
-          if(e.currentTarget.value[e.currentTarget.value.length -1] === "0"|| e.currentTarget.value[e.currentTarget.value.length -1] === "1"||e.currentTarget.value[e.currentTarget.value.length -1] === "2"){
-            await this.setState({
-              [e.currentTarget.name]: parseInt(e.currentTarget.value[e.currentTarget.value.length -1]),
-              error: ""
-            })
-
-          }
-          else if(isNaN(e.currentTarget.value[e.currentTarget.value.length - 1])){
+    rand2 = () => {
+        if (this.state.checkCards.length > 16) {
+            console.log("deck Reset");
             this.setState({
-                choice: 0,
-                error: "Invalid Input!! Select 0, 1, or 2"
-            })  
-          }
-          else{
-            this.setState({
-                choice: 0,
-                error: "Invalid Input!! Select 0, 1, or 2"
+                checkCards: []
             })
         }
     
-    }
-    catch(err){
-        console.log(err)
-    }
-    }
+        else if (this.state.checkCards.length < 16) {
+            let randF = Math.floor(Math.random() * 18);
+            let randS = Math.floor(Math.random() * 18);
+            if (this.state.checkCards.includes(this.state.pokemon[randF]) || this.state.checkCards.includes(this.state.pokemon[randS])) {
+                this.rand2();
+            }
+            else if (this.state.checkCards.includes(this.state.pokemon[randF]) && this.state.checkCards.includes(this.state.pokemon[randS])) {
+                console.log("duplicate");
+                this.rand2();
+            }
+            else {
+                this.setState({
+                    userCards: [...this.state.userCards, this.state.pokemon[randF]],
+                    compCards: [...this.state.compCards, this.state.pokemon[randS]]
+                })
+            }
+        }
+    };
+
+    
 
     compChoice = () => {
-        let value = Math.floor(Math.random() * this.state.compCards.length);
-        console.log(199, value)
+        let value = Math.floor(Math.random() * this.state.compCards.length );
         this.setState({
-            compSubmission: value
+            compSubmission: value,
+            compSelected: true
         });
+        console.log("computer made its choice")
         clearInterval(this.state.compTime);
 
     }
@@ -301,17 +308,17 @@ import ReactTimeout, { setTimeout} from "react-timeout";
         catch(err){
             console.log(err)
         } 
-      }
+    }
   
-      coadfa = async() => {
-          try{
-              this.randComp();
-              console.log("got here")
+    middle = async() => {
+      try{
+          this.randComp();
       }
       catch(err){
           console.log(err)
       }
-      }
+    }
+
 
     tick = () => {
         this.setState({
@@ -323,8 +330,9 @@ import ReactTimeout, { setTimeout} from "react-timeout";
         }
         
     }
+
     count = () => {
-        this.coadfa();
+        this.middle();
         this.setState({
             go: setInterval(this.tick, 1000)
 
@@ -334,53 +342,113 @@ import ReactTimeout, { setTimeout} from "react-timeout";
     earlySubmition = async(key, e) => {
       try{
         await this.setState({
-            earlyChoice: key
+            choice: key
         })
-      //compareDamage(this.state.earlyChoice, this.state.compSubmission)
+        this.makeChoice()
       }
       catch(err){
           console.log(err)
       }
 }
 
+    handleInput = async(e) =>{
+      try{
+          if(e.currentTarget.value[e.currentTarget.value.length -1] === "0"|| e.currentTarget.value[e.currentTarget.value.length -1] === "1"||e.currentTarget.value[e.currentTarget.value.length -1] === "2"){
+             if(parseInt(e.currentTarget.value[e.currentTarget.value.length -1]) > this.state.userCards.length){
+                 this.setState({
+                   choice: 0,
+                   error: "choice not availible based on numer of pokemon, defaluted to first pokemon"
+                 })
+             }
+             else{
+                 await this.setState({
+                     [e.currentTarget.name]: parseInt(e.currentTarget.value[e.currentTarget.value.length -1]),
+                     error: ""
+                 })
+            }
+          }
+          else if(isNaN(e.currentTarget.value[e.currentTarget.value.length - 1])){
+            this.setState({
+                choice: 0,
+                error: "Invalid Input!! Select 0, 1, or 2"
+            })  
+          }
+          else{
+            this.setState({
+                choice: 0,
+                error: "Invalid Input!! Select 0, 1, or 2"
+            })
+          }  
+    
+      }
+      catch(err){
+        console.log(err)
+      }
+    }
+
+    makeChoice = async(e) =>{
+        try{
+        if(this.state.choice !== false && this.state.compSelected){
+            this.compareDamage(this.state.choice, this.state.compSubmission)
+        }
+        else if(this.state.compSelected === false){
+            console.log("lkjhgfdsa")
+            return;
+        }
+        else{
+            console.log("asdfghjkl")
+          return this.compareDamage(0, 0)
+        }
+      }
+      catch(err){
+         console.log(err)
+     }
+    }
+
     render(){
         const view = this.state.userCards.map( (element, i) =>{
           return(
               <li key={i}>{element.name} <br/><img src={element.img}/> 
-               <button onClick={this.earlySubmition.bind(null, i)}>{i}</button>
-<br/> {element.damage}</li>
+               {this.state.compChoiceMade ? <button onClick={this.earlySubmition.bind(null, i)}>{i}</button> : true}
+               <br/> {element.damage}
+              </li>
           )
         })
-        const pic = this.state.pic.map((element, i) =>{
-               if(this.state.dispersed === true && this.state.choice !== undefined && (this.state.choice === 0 ||this.state.choice === 1 ||this.state.choice === 2)){
-                   return(
-                       <div>
-                         <img key={ i } src={this.state.userCards[this.state.choice].img}/>
-                       </div>
-                    )
-               }
-               else if(this.state.dispersed === false){
-                   return true;
-               }
-               else{
-                   return(
-                   <p key={ i }>error</p>
-                   )
-               }
-        })
+        // const pic = this.state.pic.map((element, i) =>{
+        //        if(this.state.dispersed === true && this.state.choice !== undefined && (this.state.choice === 0 ||this.state.choice === 1 ||this.state.choice === 2)){
+        //            return(
+        //                <div>
+        //                  <img key={ i } src={this.state.userCards[this.state.choice].img}/>
+        //                </div>
+        //             )
+        //        }
+        //        else if(this.state.dispersed === false){
+        //            return true;
+        //        }
+        //        else{
+        //            return(
+        //            <p key={ i }>error</p>
+        //            )
+        //        }
+        // })
         return(
             <div>
+                {this.state.winner ? <h1>winner is {this.state.winner}</h1>: true}
                 <p>code: {this.state.compSubmission}</p>
                 <h1>This is the game</h1>
                   <ol>
                     {view}
                   </ol>
+                  <h2>user wins: {this.state.userWins}</h2>
+                  <h2>user rounds won: {this.state.userRoundsWon}</h2>
+                  <h2>computron wins: {this.state.compWins}</h2>
+                  <h2>computron rounds won:{this.state.compRoundsWon}</h2>
                   {/* {pic} */}
                   {this.state.time}
                   {this.state.error}
                   <button onClick={this.rand6}>random 3</button>
                   <button onClick={this.count}>start Game</button>
-                  {/* <button onClick={this.coadfa}> comp choice</button> */}
+                  {/* <button onClick={this.middle}> comp choice</button> */}
                   <form>
                       <input type='text' value={0} name="choice" onChange={this.handleInput}/>
                   </form>
