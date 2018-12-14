@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import ReactTimeout, { setTimeout} from "react-timeout";
-import 'index.css'
+import { Grid , List, Form, Button} from "semantic-ui-react";
+import './style.css';
  class Game extends Component {
     constructor(){
         super()
@@ -121,13 +122,15 @@ import 'index.css'
                         userWins: this.state.userWins +1,
                         userCards: this.state.userCards.filter( used => this.state.userCards[choiceOfUser] !== used),
                         playedCards: [...this.state.playedCards, this.state.userCards[choiceOfUser]],
-                        compCards: this.state.compCards.filter( used => this.state.compCards[computerChoice] !== used)
+                        compCards: this.state.compCards.filter( used => this.state.compCards[computerChoice] !== used),
+                        compSelected: false,
+                        error: ""
 
                     })
+                    this.count()
                     if (this.state.userCards.length === 0) {
                         this.rand6();
                     }
-                    this.randComp();
                     if (this.state.userWins === 3) {
                        await this.setState({
                             time: 10,
@@ -135,13 +138,15 @@ import 'index.css'
                             userWins: 0,
                             compWins: 0,
                             userCards: [],
-                            compCards: []
+                            compCards: [],
+                            compSelected: false,
+                            error: ""
+
                         })
-                        
+                        this.rand6();
+                        this.roundwinner()
                         if (this.state.userRoundsWon === 3) {
-                            this.setState({
-                                winner: this.state.username
-                            });
+                             this.gameWinner(this.state.username)
                         };
                     };
                 }
@@ -151,13 +156,14 @@ import 'index.css'
                         compWins: this.state.compWins +1,
                         userCards: this.state.userCards.filter( used => this.state.userCards[choiceOfUser] !== used),
                         playedCards: [...this.state.playedCards, this.state.userCards[choiceOfUser]],
-                        compCards: this.state.compCards.filter( used => this.state.compCards[computerChoice] !== used)
-
+                        compCards: this.state.compCards.filter( used => this.state.compCards[computerChoice] !== used),
+                        compSelected: false,
+                        error: ""
                     })
+                    this.count()
                     if (this.state.userCards.length === 0) {
                         this.rand6();
                     }
-                    this.randComp();
                     if (this.state.compWins === 3) {
                         await this.setState({
                             compRoundsWon: this.state.compRoundsWon + 1,
@@ -165,13 +171,14 @@ import 'index.css'
                             compWins: 0,
                             time: 10,
                             userCards: [],
-                            compCards: []
+                            compCards: [],
+                            compSelected: false,
+                            error:""
+
                         })
-                        this.roundwinner()
+                        this.rand6();
+                        this.roundwinner();
                         if (this.state.compRoundsWon === 3) {
-                           await this.setState({
-                                winner: "Computron"
-                            })
                             this.gameWinner(this.state.winner)
                         };
                     };
@@ -183,7 +190,10 @@ import 'index.css'
                         time: 10,
                         userCards: this.state.userCards.filter( used => this.state.userCards[choiceOfUser] !== used),
                         playedCards: [...this.state.playedCards, this.state.userCards[choiceOfUser]],
-                        compCards: this.state.compCards.filter( used => this.state.compCards[computerChoice] !== used)
+                        compCards: this.state.compCards.filter( used => this.state.compCards[computerChoice] !== used),
+                        compSelected: false,
+                        error: ""
+
                     })
                     this.tieProtocol();
                 }
@@ -201,22 +211,26 @@ import 'index.css'
     };
     tieProtocol = () =>{
         this.rand2();
-        clearInterval(this.state.go)
+       // clearInterval(this.state.go)
         this.count();
     }
     
     roundwinner = () => {
-        clearInterval(this.state.go)
+        clearInterval(this.state.go);
+        clearInterval(this.state.compTime);
         this.setState({
             time: 10
         })
     }
 
     gameWinner = (winner) =>{
+        clearInterval(this.state.go);
+        clearInterval(this.state.compTime);
         this.setState({
-            winner: winner
-        })
-    }
+            winner: winner,
+            compSelected: false
+        });
+    };
 
     rand6 = async() => {
       try{
@@ -294,7 +308,6 @@ import 'index.css'
         });
         console.log("computer made its choice")
         clearInterval(this.state.compTime);
-
     }
 
     randComp = async() => {
@@ -344,6 +357,7 @@ import 'index.css'
         await this.setState({
             choice: key
         })
+        clearInterval(this.state.go)
         this.makeChoice()
       }
       catch(err){
@@ -352,10 +366,11 @@ import 'index.css'
 }
 
     handleInput = async(e) =>{
+        console.log(parseInt(e.currentTarget.value[e.currentTarget.value.length -1]), 360)
       try{
           if(e.currentTarget.value[e.currentTarget.value.length -1] === "0"|| e.currentTarget.value[e.currentTarget.value.length -1] === "1"||e.currentTarget.value[e.currentTarget.value.length -1] === "2"){
-             if(parseInt(e.currentTarget.value[e.currentTarget.value.length -1]) > this.state.userCards.length){
-                 this.setState({
+             if(parseInt(e.currentTarget.value[e.currentTarget.value.length -1]) >= this.state.userCards.length){
+                await this.setState({
                    choice: 0,
                    error: "choice not availible based on numer of pokemon, defaluted to first pokemon"
                  })
@@ -388,70 +403,95 @@ import 'index.css'
 
     makeChoice = async(e) =>{
         try{
-        if(this.state.choice !== false && this.state.compSelected){
-            this.compareDamage(this.state.choice, this.state.compSubmission)
+            if(this.state.choice !== false && this.state.compSelected){
+                this.compareDamage(this.state.choice, this.state.compSubmission)
+            }
+            else if(this.state.compSelected === false){
+                console.log("lkjhgfdsa")
+                return;
+            }
+            else{
+                console.log("asdfghjkl")
+                return this.compareDamage(0, 0)
+            }
         }
-        else if(this.state.compSelected === false){
-            console.log("lkjhgfdsa")
-            return;
+        catch(err){
+           console.log(err)
         }
-        else{
-            console.log("asdfghjkl")
-          return this.compareDamage(0, 0)
-        }
-      }
-      catch(err){
-         console.log(err)
-     }
+    }
+    doNothing = (e) => {
+      e.preventDefault()
     }
 
     render(){
-        const view = this.state.userCards.map( (element, i) =>{
+        const userPokes = this.state.userCards.map( (element, i) =>{
           return(
-              <li key={i}>{element.name} <br/><img src={element.img}/> 
-               {this.state.compChoiceMade ? <button onClick={this.earlySubmition.bind(null, i)}>{i}</button> : true}
+              <List.Item key={i}>{element.name} <br/><img className="small" src={element.img}/> 
+               {this.state.compSelected ? <button onClick={this.earlySubmition.bind(null, i)}>{i}</button> : true}
                <br/> {element.damage}
-              </li>
+              </List.Item>
           )
         })
-        // const pic = this.state.pic.map((element, i) =>{
-        //        if(this.state.dispersed === true && this.state.choice !== undefined && (this.state.choice === 0 ||this.state.choice === 1 ||this.state.choice === 2)){
-        //            return(
-        //                <div>
-        //                  <img key={ i } src={this.state.userCards[this.state.choice].img}/>
-        //                </div>
-        //             )
-        //        }
-        //        else if(this.state.dispersed === false){
-        //            return true;
-        //        }
-        //        else{
-        //            return(
-        //            <p key={ i }>error</p>
-        //            )
-        //        }
-        // })
+        const compPokes = this.state.compCards.map((element, i) =>{
+                  if(this.state.compSelected === true && this.state.compSubmission === i){
+                  return(
+                       <List.Item key={ i } >
+                         <img className="small" src= {element.img} />
+                       </List.Item>
+                    )
+                  }
+                  else{
+                      return(
+                         <List.Item key={ i }>
+                             <img src="./../../../pokemon-card.png" />
+                         </List.Item> 
+                      )
+                  }
+               
+        })
         return(
             <div>
                 {this.state.winner ? <h1>winner is {this.state.winner}</h1>: true}
-                <p>code: {this.state.compSubmission}</p>
-                <h1>This is the game</h1>
-                  <ol>
-                    {view}
-                  </ol>
-                  <h2>user wins: {this.state.userWins}</h2>
-                  <h2>user rounds won: {this.state.userRoundsWon}</h2>
-                  <h2>computron wins: {this.state.compWins}</h2>
-                  <h2>computron rounds won:{this.state.compRoundsWon}</h2>
-                  {/* {pic} */}
-                  {this.state.time}
+
+                 <h2>Time to Pick: {this.state.time}</h2>
+                  <Grid columns='2' divided>
+                    <Grid.Row>
+                        <Grid.Column>
+                          <h2>user wins: {this.state.userWins}</h2>
+                        </Grid.Column>
+                        <Grid.Column>
+                        <h2>user rounds won: {this.state.userRoundsWon}</h2>
+                        </Grid.Column>
+                    </Grid.Row>
+                    <Grid.Row>
+                        <Grid.Column>
+                        <h2>computron wins: {this.state.compWins}</h2>
+                        </Grid.Column>
+                        <Grid.Column>
+                        <h2>computron rounds won:{this.state.compRoundsWon}</h2> 
+                        </Grid.Column>
+                    </Grid.Row>
+                  </Grid>
+ 
+                  <List horizontal>
+                    {compPokes}
+                  </List>
+                  <br/>
+
+                  <List ordered horizontal>
+                    {userPokes}
+                  </List>
+                  <br/>
                   {this.state.error}
-                  <button onClick={this.rand6}>random 3</button>
-                  <button onClick={this.count}>start Game</button>
-                  {/* <button onClick={this.middle}> comp choice</button> */}
-                  <form>
-                      <input type='text' value={0} name="choice" onChange={this.handleInput}/>
-                  </form>
+                  <Button onClick={ () => {
+                      this.rand6()
+                      this.count() 
+                }
+                }>random 3</Button>
+                  <Button onClick={this.count}>start round</Button>
+                  {/* <Form onSubmit={this.doNothing}>
+                      <Form.Input type='text' value={this.state.choice} name="choice" onChange={this.handleInput}/>
+                  </Form> */}
             </div>
         )
     }

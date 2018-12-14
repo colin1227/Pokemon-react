@@ -1,0 +1,10 @@
+.small {
+    height: 200px;
+    width: 200px;
+}
+
+li {
+    display: inline-flex;
+    flex-direction: row;
+    justify-content: center;
+}
