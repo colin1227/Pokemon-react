@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import ReactTimeout, { setTimeout} from "react-timeout";
-import { Grid , List, Form, Button} from "semantic-ui-react";
+import { Grid , List,Form, Header, Button, Modal} from "semantic-ui-react";
 import './style.css';
  class Game extends Component {
     constructor(){
@@ -32,7 +31,11 @@ import './style.css';
             dispersed: false,
             error: "",
             winner: "",
-            
+            roundwinner:false,
+            gameWinner:false,
+            gameStarted: false,
+            roundEnded: false,
+
             checkCards: [],
             pic: [0],
             pokemon: [
@@ -112,7 +115,7 @@ import './style.css';
         }
     }
     compareDamage = async (choiceOfUser, computerChoice) => {
-        console.log(choiceOfUser, computerChoice)
+        
         try{
         
             if (this.state.userCards.length > 0) {
@@ -140,7 +143,10 @@ import './style.css';
                             userCards: [],
                             compCards: [],
                             compSelected: false,
-                            error: ""
+                            error: "",
+                            roundwinner: true,
+                            winner: this.state.username
+
 
                         })
                         this.rand6();
@@ -173,7 +179,9 @@ import './style.css';
                             userCards: [],
                             compCards: [],
                             compSelected: false,
-                            error:""
+                            error:"",
+                            roundwinner: true,
+                            winner: "computron"
 
                         })
                         this.rand6();
@@ -206,7 +214,6 @@ import './style.css';
             };
         }
        catch(err){
-           console.log(err)
        }
     };
     tieProtocol = () =>{
@@ -235,7 +242,6 @@ import './style.css';
     rand6 = async() => {
       try{
         if (this.state.checkCards.length > 12) {
-            console.log("Deck Reset");
             this.setState({
                 checkCards : []
             });
@@ -267,13 +273,11 @@ import './style.css';
         return true;
       }
       catch(err){
-          console.log(err)
       }
     };
 
     rand2 = () => {
         if (this.state.checkCards.length > 16) {
-            console.log("deck Reset");
             this.setState({
                 checkCards: []
             })
@@ -286,7 +290,6 @@ import './style.css';
                 this.rand2();
             }
             else if (this.state.checkCards.includes(this.state.pokemon[randF]) && this.state.checkCards.includes(this.state.pokemon[randS])) {
-                console.log("duplicate");
                 this.rand2();
             }
             else {
@@ -306,7 +309,6 @@ import './style.css';
             compSubmission: value,
             compSelected: true
         });
-        console.log("computer made its choice")
         clearInterval(this.state.compTime);
     }
 
@@ -319,7 +321,6 @@ import './style.css';
           
         }
         catch(err){
-            console.log(err)
         } 
     }
   
@@ -328,7 +329,6 @@ import './style.css';
           this.randComp();
       }
       catch(err){
-          console.log(err)
       }
     }
 
@@ -347,7 +347,8 @@ import './style.css';
     count = () => {
         this.middle();
         this.setState({
-            go: setInterval(this.tick, 1000)
+            go: setInterval(this.tick, 1000),
+            roundEnded: false
 
         })
     }
@@ -361,12 +362,10 @@ import './style.css';
         this.makeChoice()
       }
       catch(err){
-          console.log(err)
       }
 }
 
     handleInput = async(e) =>{
-        console.log(parseInt(e.currentTarget.value[e.currentTarget.value.length -1]), 360)
       try{
           if(e.currentTarget.value[e.currentTarget.value.length -1] === "0"|| e.currentTarget.value[e.currentTarget.value.length -1] === "1"||e.currentTarget.value[e.currentTarget.value.length -1] === "2"){
              if(parseInt(e.currentTarget.value[e.currentTarget.value.length -1]) >= this.state.userCards.length){
@@ -397,7 +396,6 @@ import './style.css';
     
       }
       catch(err){
-        console.log(err)
       }
     }
 
@@ -407,26 +405,28 @@ import './style.css';
                 this.compareDamage(this.state.choice, this.state.compSubmission)
             }
             else if(this.state.compSelected === false){
-                console.log("lkjhgfdsa")
                 return;
             }
             else{
-                console.log("asdfghjkl")
                 return this.compareDamage(0, 0)
             }
         }
         catch(err){
-           console.log(err)
+           
         }
     }
-    doNothing = (e) => {
-      e.preventDefault()
+    closeModal = () => {
+      this.setState({
+          roundwinner: false,
+          gameWinner: false,
+          roundEnded: true
+      })
     }
 
     render(){
         const userPokes = this.state.userCards.map( (element, i) =>{
           return(
-              <List.Item key={i}>{element.name} <br/><img className="small" src={element.img}/> 
+              <List.Item key={i}>{element.name} <br/><img className="small" alt={element.name} src={element.img}/> 
                {this.state.compSelected ? <button onClick={this.earlySubmition.bind(null, i)}>{i}</button> : true}
                <br/> {element.damage}
               </List.Item>
@@ -436,14 +436,14 @@ import './style.css';
                   if(this.state.compSelected === true && this.state.compSubmission === i){
                   return(
                        <List.Item key={ i } >
-                         <img className="small" src= {element.img} />
+                         <img className="small" src= {element.img} alt={element.name} />
                        </List.Item>
                     )
                   }
                   else{
                       return(
                          <List.Item key={ i }>
-                             <img src="./../../../pokemon-card.png" />
+                             <img src="./../../../pokemon-card.png" alt="this is the card back" />
                          </List.Item> 
                       )
                   }
@@ -451,8 +451,16 @@ import './style.css';
         })
         return(
             <div>
-                {this.state.winner ? <h1>winner is {this.state.winner}</h1>: true}
-
+                {this.state.gameWinner ? <h1>winner is {this.state.winner}</h1>: true}
+                 <Modal open={this.state.roundwinner} onClose={this.closeModal}>
+                     <Header>{this.state.winner} won the round!</Header>
+                     <Modal.Actions>
+                         <Form onSubmit={this.closeModal}>
+                             <Button type="submit">Done</Button>
+                         </Form>
+                     </Modal.Actions>
+                 </Modal>
+                  {this.state.error}
                  <h2>Time to Pick: {this.state.time}</h2>
                   <Grid columns='2' divided>
                     <Grid.Row>
@@ -482,19 +490,18 @@ import './style.css';
                     {userPokes}
                   </List>
                   <br/>
-                  {this.state.error}
-                  <Button onClick={ () => {
+                {this.state.gameStarted ? true :<Button onClick={ () => {
                       this.rand6()
-                      this.count() 
-                }
-                }>random 3</Button>
-                  <Button onClick={this.count}>start round</Button>
-                  {/* <Form onSubmit={this.doNothing}>
-                      <Form.Input type='text' value={this.state.choice} name="choice" onChange={this.handleInput}/>
-                  </Form> */}
+                      this.count()
+                      this.setState({
+                          gameStarted: true
+                      })
+                      }}>Start Game</Button>}
+                {this.state.roundEnded ? <Button onClick={this.count}>Start Round</Button>: true}
+
             </div>
         )
     }
 }
 
-export default ReactTimeout(Game);
+export default Game;
