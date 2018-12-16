@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import {Switch , Route} from "react-router";
 import Home from "./HomePage";
 import Game from "./GamePage";
+import Edit from "./EditPage"
 export default class Container extends Component {
     constructor(){
         super()
@@ -18,6 +19,12 @@ export default class Container extends Component {
                     render={(routeProps) => {
                         return (
                             <Home {...routeProps} {...this.props} logged={this.state.logged} />
+                        )
+                    }} />
+                <Route exact path="/editAll"
+                    render={(routeProps) => {
+                        return (
+                            <Edit {...routeProps} {...this.props} logged={this.state.logged} />
                         )
                     }} />
                 <Route exact path="/game"

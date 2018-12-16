@@ -38,81 +38,29 @@ import './style.css';
 
             checkCards: [],
             pic: [0],
-            pokemon: [
-                {
-                    name: "Bulbasaur",
-                    img: "http://img.pokemondb.net/artwork/bulbasaur.jpg",
-                    damage: 60
-                }, {
-                    name: "Caterpie",
-                    img: "http://img.pokemondb.net/artwork/caterpie.jpg",
-                    damage: 40
-                }, {
-                    name: "Charmander",
-                    img: "http://img.pokemondb.net/artwork/charmander.jpg",
-                    damage: 60
-                }, {
-                    name: "Clefairy",
-                    img: "http://img.pokemondb.net/artwork/clefairy.jpg",
-                    damage: 50
-                }, {
-                    name: "Jigglypuff",
-                    img: "http://img.pokemondb.net/artwork/jigglypuff.jpg",
-                    damage: 60
-                }, {
-                    name: "Mankey",
-                    img: "http://img.pokemondb.net/artwork/mankey.jpg",
-                    damage: 30
-                }, {
-                    name: "Meowth",
-                    img: "http://img.pokemondb.net/artwork/meowth.jpg",
-                    damage: 60
-                }, {
-                    name: "Nidoran - female",
-                    img: "http://img.pokemondb.net/artwork/nidoran-f.jpg",
-                    damage: 60
-                }, {
-                    name: "Nidoran - male",
-                    img: "http://img.pokemondb.net/artwork/nidoran-m.jpg",
-                    damage: 50
-                }, {
-                    name: "Oddish",
-                    img: "http://img.pokemondb.net/artwork/oddish.jpg",
-                    damage: 40
-                }, {
-                    name: "Pidgey",
-                    img: "http://img.pokemondb.net/artwork/pidgey.jpg",
-                    damage: 50
-                }, {
-                    name: "Pikachu",
-                    img: "http://img.pokemondb.net/artwork/pikachu.jpg",
-                    damage: 50
-                }, {
-                    name: "Poliwag",
-                    img: "http://img.pokemondb.net/artwork/poliwag.jpg",
-                    damage: 50
-                }, {
-                    name: "Psyduck",
-                    img: "http://img.pokemondb.net/artwork/psyduck.jpg",
-                    damage: 60
-                }, {
-                    name: "Rattata",
-                    img: "http://img.pokemondb.net/artwork/rattata.jpg",
-                    damage: 30
-                }, {
-                    name: "Squirtle",
-                    img: "http://img.pokemondb.net/artwork/squirtle.jpg",
-                    damage: 60
-                }, {
-                    name: "Vulpix",
-                    img: "http://img.pokemondb.net/artwork/vulpix.jpg",
-                    damage: 50
-                }, {
-                    name: "Weedle",
-                    img: "http://img.pokemondb.net/artwork/weedle.jpg",
-                    damage: 40
-                }]
+            pokemon: []
         }
+    }
+    gatherPokemon = async(e) => {
+        try{
+            const data = await fetch("http://localhost:8000/view/grabPokemon");
+            const parsedResponse = await data.json();
+            return parsedResponse;
+        }
+        catch(err){
+            this.setState({
+                error: true
+            })
+        }
+    }
+    componentDidMount () {
+        this.gatherPokemon().then((data)=>{
+            data.data.forEach( async element => {
+                 this.setState({
+                     pokemon: [...this.state.pokemon, element]
+                 })
+             });
+        })
     }
     compareDamage = async (choiceOfUser, computerChoice) => {
         

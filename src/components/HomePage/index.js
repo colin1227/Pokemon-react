@@ -15,7 +15,7 @@ export default class Home extends Component {
                     <List.Item>If you get 3 points you win the round</List.Item>
                     <List.Item>If you win 3 rounds you win the game</List.Item>
                 </List>
-                <Link to="/game">Play</Link>
+                <Link to="/game">Play</Link><Link to="/editAll">edit</Link>
             </div>
         )
     }
