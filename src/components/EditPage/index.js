@@ -51,20 +51,15 @@ export default class Edit extends Component {
         }
     }
 
-    editPokemon = async(e) => {
-        try{
-
-        }
-        catch(err){
-            this.setState({
-                error: true
-            })
-        }
-    }
-
     addPokemon = async(e) => {
         try{
-
+          const request = await fetch("http://localhost:3000/crud/new-pokemon", {
+              method: "POST",
+              body: JSON.stringify({
+                  data: this.state.PokeToAdd
+              }),
+              headers: {"Content-Type": "application/json"}
+          })
         }
         catch(err){
             this.setState({
@@ -73,10 +68,26 @@ export default class Edit extends Component {
         }
     }
 
+editPokemon = async(e) => {
+        try{
+            const request = await fetch("http://localhost:3000/crud/update-pokemon", {
+                method: "POST",
+                body: JSON.stringify({
+                    data: this.state.PokeToEdit
+                }),
+                headers: {"Content-Type": "application/json"}
+            })
+        }
+        catch(err){
+            this.setState({
+                error: true
+            })
+        }
+    }
 
     gatherPokemon = async(e) => {
         try{
-            const data = await fetch("http://localhost:8000/view/grabPokemon");
+            const data = await fetch("http://localhost:8000/crud/grabPokemon");
             const parsedResponse = await data.json();
             parsedResponse.data.forEach( async element => {
                await this.setState({
@@ -93,7 +104,7 @@ export default class Edit extends Component {
     }
     inject = async(e) => {
         try{
-            const data = await fetch("http://localhost:8000/view/baseInjection",{
+            const data = await fetch("http://localhost:8000/curd/baseInjection",{
                 method: "POST",
                 body: JSON.stringify({
                     pokemon: [
