@@ -9,7 +9,7 @@ export default class Edit extends Component {
             edit: false,
             sure: false,
             adding: false,
-            
+
             PokeToEditName: "",
             PokeToEditImg: "",
             PokeToEditDamage: 0,
@@ -265,9 +265,9 @@ export default class Edit extends Component {
                 <Modal open={this.state.edit}>
                   <Modal.Actions>
                       <Form onSubmit={this.editPokemon}>
-                          <Form.Input type="text" name="name" placeholder="name" value={this.state.PokeToEdit.name} onChange={this.handleInput.bind(null, "PokeToEdit")}/>
-                          <Form.Input type="text" name="img" placeholder="image URL" value={this.state.PokeToEdit.img} onChange={this.handleInput.bind(null, "PokeToEdit")}/>
-                          <Form.Input type="text" name="damage" placeholder="damage" value={this.state.PokeToEdit.damage} onChange={this.handleInput.bind(null, "PokeToEdit")}/>
+                          <Form.Input type="text" name="PokeToEditName" placeholder="name" value={this.state.PokeToEditName} onChange={this.handleInput}/>
+                          <Form.Input type="text" name="PokeToEditImg" placeholder="image URL" value={this.state.PokeToEditImg} onChange={this.handleInput}/>
+                          <Form.Input type="text" name="PokeToEditDamage" placeholder="damage" value={this.state.PokeToEditDamage} onChange={this.handleInput}/>
                           <Button type="submit">Submit</Button>
                       </Form>
                   </Modal.Actions>  
