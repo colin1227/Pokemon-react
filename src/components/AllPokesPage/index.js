@@ -9,7 +9,7 @@ export default class AllPokes extends Component {
     }
     gatherPokemon = async(e) => {
         try{
-            const data = await fetch("https://mysterious-everglades-76630.herokuapp.com/crud/grabPokemon");
+            const data = await fetch("https://git.heroku.com/mysterious-everglades-76630.git/crud/grabPokemon");
             const parsedResponse = await data.json();
             return parsedResponse;
         }

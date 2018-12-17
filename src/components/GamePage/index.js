@@ -43,7 +43,7 @@ import './style.css';
     }
     gatherPokemon = async(e) => {
         try{
-            const data = await fetch("http://localhost:8000/crud/grabPokemon");
+            const data = await fetch("https://git.heroku.com/mysterious-everglades-76630.git/crud/grabPokemon");
             const parsedResponse = await data.json();
             return parsedResponse;
         }
