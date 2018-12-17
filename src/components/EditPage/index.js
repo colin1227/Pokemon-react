@@ -52,7 +52,7 @@ export default class Edit extends Component {
 
     addPokemon = async(e) => {
         try{
-          const request = await fetch("https://git.heroku.com/mysterious-everglades-76630.git/crud/new-pokemon", {
+          const request = await fetch("https://mysterious-everglades-76630.herokuapp.com/crud/new-pokemon", {
               method: "POST",
               body: JSON.stringify({
                 PokeToAddName: this.state.PokeToAddName,
@@ -76,7 +76,7 @@ export default class Edit extends Component {
 
     editPokemon = async(e) => {
         try{
-            const request = await fetch("https://git.heroku.com/mysterious-everglades-76630.git/crud/update-pokemon", {
+            const request = await fetch("https://mysterious-everglades-76630.herokuapp.com/crud/update-pokemon", {
                 method: "POST",
                 body: JSON.stringify({
                     PokeToEditName: this.state.PokeToEditName,
@@ -102,7 +102,7 @@ export default class Edit extends Component {
 
     gatherPokemon = async(e) => {
         try{
-            const data = await fetch("https://git.heroku.com/mysterious-everglades-76630.git/crud/grabPokemon");
+            const data = await fetch("https://mysterious-everglades-76630.herokuapp.com/crud/grabPokemon");
             const parsedResponse = await data.json();
             parsedResponse.data.forEach( async element => {
                await this.setState({
@@ -119,7 +119,7 @@ export default class Edit extends Component {
     }
     inject = async(e) => {
         try{
-            const data = await fetch("https://git.heroku.com/mysterious-everglades-76630.git/curd/baseInjection",{
+            const data = await fetch("https://mysterious-everglades-76630.herokuapp.com/curd/baseInjection",{
                 method: "POST",
                 body: JSON.stringify({
                     pokemon: [
