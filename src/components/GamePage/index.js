@@ -27,7 +27,7 @@ import './style.css';
             compSelected: false,
             
             go: undefined,
-            time: 10,
+            time: 15,
             dispersed: false,
             error: "",
             winner: "",
@@ -43,7 +43,7 @@ import './style.css';
     }
     gatherPokemon = async(e) => {
         try{
-            const data = await fetch("http://localhost:8000/view/grabPokemon");
+            const data = await fetch("http://localhost:8000/crud/grabPokemon");
             const parsedResponse = await data.json();
             return parsedResponse;
         }
@@ -69,7 +69,7 @@ import './style.css';
             if (this.state.userCards.length > 0) {
                 if (this.state.userCards[choiceOfUser].damage > this.state.compCards[computerChoice].damage) {
                    await this.setState({
-                        time: 10,
+                        time: 15,
                         userWins: this.state.userWins +1,
                         userCards: this.state.userCards.filter( used => this.state.userCards[choiceOfUser] !== used),
                         playedCards: [...this.state.playedCards, this.state.userCards[choiceOfUser]],
@@ -84,7 +84,7 @@ import './style.css';
                     }
                     if (this.state.userWins === 3) {
                        await this.setState({
-                            time: 10,
+                            time: 15,
                             userRoundsWon: this.state.userRoundsWon + 1,
                             userWins: 0,
                             compWins: 0,
@@ -106,7 +106,7 @@ import './style.css';
                 }
                 else if (this.state.userCards[choiceOfUser].damage < this.state.compCards[computerChoice].damage) {
                     await this.setState({
-                        time: 10,
+                        time: 15,
                         compWins: this.state.compWins +1,
                         userCards: this.state.userCards.filter( used => this.state.userCards[choiceOfUser] !== used),
                         playedCards: [...this.state.playedCards, this.state.userCards[choiceOfUser]],
@@ -123,7 +123,7 @@ import './style.css';
                             compRoundsWon: this.state.compRoundsWon + 1,
                             userWins: 0,
                             compWins: 0,
-                            time: 10,
+                            time: 15,
                             userCards: [],
                             compCards: [],
                             compSelected: false,
@@ -143,7 +143,7 @@ import './style.css';
                 //else if computer and Ash tie run tieProtocol
                 else if (this.state.userCards[choiceOfUser].damage === this.state.compCards[computerChoice].damage) {
                     await this.setState({
-                        time: 10,
+                        time: 15,
                         userCards: this.state.userCards.filter( used => this.state.userCards[choiceOfUser] !== used),
                         playedCards: [...this.state.playedCards, this.state.userCards[choiceOfUser]],
                         compCards: this.state.compCards.filter( used => this.state.compCards[computerChoice] !== used),
@@ -174,7 +174,7 @@ import './style.css';
         clearInterval(this.state.go);
         clearInterval(this.state.compTime);
         this.setState({
-            time: 10
+            time: 15
         })
     }
 

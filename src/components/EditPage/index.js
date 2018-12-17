@@ -14,22 +14,21 @@ export default class Edit extends Component {
                 img: "",
                 damage: 0
             },
-            PokeToAdd:{
-                name: "",
-                img: "",
-                damage: 0
-            }
+            
+            PokeToAddName: "",
+            PokeToAddImg: "",
+            PokeToAddDamage: 0
+            
         }
     }
+
      componentDidMount() {
          this.gatherPokemon()
      }
-     handleInput = (mode,e) => {
+     handleInput = (e) => {
         e.preventDefault()
-        this.setState({
-              [mode]:{
+        this.setState({  
                  [e.currentTarget.name]: e.currentTarget.value
-             }
          })
      }
 
@@ -53,13 +52,20 @@ export default class Edit extends Component {
 
     addPokemon = async(e) => {
         try{
-          const request = await fetch("http://localhost:3000/crud/new-pokemon", {
+          const request = await fetch("https://mysterious-everglades-76630.herokuapp.com/crud/new-pokemon", {
               method: "POST",
               body: JSON.stringify({
-                  data: this.state.PokeToAdd
+                PokeToAddName: this.state.PokeToAddName,
+                PokeToAddImg: this.state.PokeToAddImg,
+                PokeToAddDamage: this.state.PokeToAddDamage,
               }),
               headers: {"Content-Type": "application/json"}
           })
+          this.setState({
+              adding: false,
+              pokemon: []
+          })
+          this.gatherPokemon();
         }
         catch(err){
             this.setState({
@@ -68,15 +74,24 @@ export default class Edit extends Component {
         }
     }
 
-editPokemon = async(e) => {
+    editPokemon = async(e) => {
         try{
-            const request = await fetch("http://localhost:3000/crud/update-pokemon", {
+            const request = await fetch("https://mysterious-everglades-76630.herokuapp.com/crud/update-pokemon", {
                 method: "POST",
                 body: JSON.stringify({
-                    data: this.state.PokeToEdit
+                    PokeToEditName: this.state.PokeToEditName,
+                    PokeToEditImg: this.state.PokeToEditImg,
+                    PokeToEditDamage: this.state.PokeToEditDamage
+
                 }),
                 headers: {"Content-Type": "application/json"}
             })
+            this.setState({
+                edit: false,
+                pokemon: []
+            })
+                this.gatherPokemon()
+
         }
         catch(err){
             this.setState({
@@ -87,7 +102,7 @@ editPokemon = async(e) => {
 
     gatherPokemon = async(e) => {
         try{
-            const data = await fetch("http://localhost:8000/crud/grabPokemon");
+            const data = await fetch("https://mysterious-everglades-76630.herokuapp.com/crud/grabPokemon");
             const parsedResponse = await data.json();
             parsedResponse.data.forEach( async element => {
                await this.setState({
@@ -104,7 +119,7 @@ editPokemon = async(e) => {
     }
     inject = async(e) => {
         try{
-            const data = await fetch("http://localhost:8000/curd/baseInjection",{
+            const data = await fetch("https://mysterious-everglades-76630.herokuapp.com/curd/baseInjection",{
                 method: "POST",
                 body: JSON.stringify({
                     pokemon: [
@@ -216,9 +231,9 @@ editPokemon = async(e) => {
                 <Modal open={this.state.adding}>
                   <Modal.Actions>
                       <Form onSubmit={this.addPokemon}>
-                          <Form.Input type="text" name="name" placeholder="name" value={this.state.PokeToAdd.name} onChange={this.handleInput.bind(null, "PokeToAdd")}/>
-                          <Form.Input type="text" name="img" placeholder="image URL" value={this.state.PokeToAdd.img} onChange={this.handleInput.bind(null, "PokeToAdd")}/>
-                          <Form.Input type="text" name="damage" placeholder="damage" value={this.state.PokeToAdd.damage} onChange={this.handleInput.bind(null, "PokeToAdd")}/>
+                          <Form.Input type="text" name="PokeToAddName" placeholder="name" value={this.state.PokeToAddName} onChange={this.handleInput}/>
+                          <Form.Input type="text" name="PokeToAddImg" placeholder="image URL" value={this.state.PokeToAddImg} onChange={this.handleInput}/>
+                          <Form.Input type="text" name="PokeToAddDamage" placeholder="damage" value={this.state.PokeToAddDamage} onChange={this.handleInput}/>
                           <Button type="submit">Submit</Button>
                       </Form>
                   </Modal.Actions>  
