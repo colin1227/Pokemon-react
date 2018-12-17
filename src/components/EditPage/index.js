@@ -9,11 +9,10 @@ export default class Edit extends Component {
             edit: false,
             sure: false,
             adding: false,
-            PokeToEdit:{
-                name: "",
-                img: "",
-                damage: 0
-            },
+            
+            PokeToEditName: "",
+            PokeToEditImg: "",
+            PokeToEditDamage: 0,
             
             PokeToAddName: "",
             PokeToAddImg: "",
