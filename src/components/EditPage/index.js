@@ -121,6 +121,11 @@ export default class Edit extends Component {
             error: false
         })
     }
+    notSure = () => {
+        this.setState({
+            sure: false
+        })
+    }
     inject = async(e) => {
         try{
             const data = await fetch("https://mysterious-everglades-76630.herokuapp.com/crud/baseInjection",{
@@ -278,10 +283,10 @@ export default class Edit extends Component {
                   <p>If you do this you might create duplicates, are you sure there is nothing in the data base?</p>
                   </Modal.Content>
                   <Modal.Actions>
-                      <Button color='red'>
+                      <Button onClick={this.notSure} color='red'>
                         <Icon name='remove' /> No
                       </Button>
-                      <Button color='green' inverted>
+                      <Button color='green' onClick={this.inject} inverted>
                         <Icon name='checkmark' /> I'm Sure
                       </Button>
                     </Modal.Actions>  
