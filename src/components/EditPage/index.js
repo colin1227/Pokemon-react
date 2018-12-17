@@ -117,9 +117,14 @@ export default class Edit extends Component {
             })
         }
     }
+    clearError = () => {
+        this.setState({
+            error: false
+        })
+    }
     inject = async(e) => {
         try{
-            const data = await fetch("https://mysterious-everglades-76630.herokuapp.com/curd/baseInjection",{
+            const data = await fetch("https://mysterious-everglades-76630.herokuapp.com/crud/baseInjection",{
                 method: "POST",
                 body: JSON.stringify({
                     pokemon: [
@@ -202,7 +207,13 @@ export default class Edit extends Component {
             this.setState({
                 sure: false
             })
-           // const response = await data.json()
+           const response = await data.json()
+           if(response.error){
+               this.setState({
+                   sure: false,
+                   error: true
+               })
+           }
             return true;
         }
         catch(err){
@@ -216,6 +227,7 @@ export default class Edit extends Component {
     render(){
         const pokemon = this.state.pokemon.map((element, i) => {
             return(
+
                 <div key={ i }>
                   <ul>
                     <li>{element.name}</li>
@@ -228,6 +240,18 @@ export default class Edit extends Component {
         })
         return(
             <div>
+
+                <Modal open={this.state.error}>
+                    <Modal.Content>
+                        <b>there was an error</b>
+                    </Modal.Content>
+                    <Modal.Actions>
+                        <Button onClick={this.clearError}>
+                            Ok
+                        </Button>
+                    </Modal.Actions>
+                </Modal>
+
                 <Modal open={this.state.adding}>
                   <Modal.Actions>
                       <Form onSubmit={this.addPokemon}>
@@ -238,6 +262,7 @@ export default class Edit extends Component {
                       </Form>
                   </Modal.Actions>  
                 </Modal>
+
                 <Modal open={this.state.edit}>
                   <Modal.Actions>
                       <Form onSubmit={this.editPokemon}>
@@ -248,6 +273,7 @@ export default class Edit extends Component {
                       </Form>
                   </Modal.Actions>  
                 </Modal>
+
                 <Modal open={this.state.sure}>
                   <Modal.Content>
                   <p>If you do this you might create duplicates, are you sure there is nothing in the data base?</p>
@@ -261,6 +287,7 @@ export default class Edit extends Component {
                       </Button>
                     </Modal.Actions>  
                 </Modal>
+
                 {pokemon}
                 <Form onSubmit={() => {
                     this.setState({
