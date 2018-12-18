@@ -36,7 +36,7 @@ export default class AllPokes extends Component {
     render(){
         const displayPokemon = this.state.pokemon.map((element, i) => {
             return(
-                <div>
+                <div key={i}>
                     <div>
                       <b>{element.name} dmg: {element.damage}</b>
                       <img src={element.img} alt={element.name}/>

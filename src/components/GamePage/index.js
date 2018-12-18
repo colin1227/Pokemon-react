@@ -11,7 +11,7 @@ import './style.css';
         this.compChoice = this.compChoice.bind(this);
         this.middle = this.middle.bind(this);
         this.state = {
-            username: "nothing for now",
+            username: "You",
             userCards: [],
             userWins: 0,
             userRoundsWon: 0,
@@ -374,9 +374,9 @@ import './style.css';
     render(){
         const userPokes = this.state.userCards.map( (element, i) =>{
           return(
-              <List.Item key={i}>{element.name} <br/><img className="small" alt={element.name} src={element.img}/> 
-               {this.state.compSelected ? <button onClick={this.earlySubmition.bind(null, i)}>{i}</button> : true}
-               <br/> {element.damage}
+              <List.Item key={i}>{this.state.compSelected ? <Button color="green" inverted onClick={this.earlySubmition.bind(null, i)}>{parseInt(i) + 1}</Button> : true}
+              <p><b>{element.name}</b>  dmg: {element.damage}</p> <br/><img className="small" alt={element.name} src={element.img}/> 
+               <br/>
               </List.Item>
           )
         })
@@ -391,7 +391,7 @@ import './style.css';
                   else{
                       return(
                          <List.Item key={ i }>
-                             <img src="./../../../pokemon-card.png" alt="this is the card back" />
+                             <img src="./../../../pokemon-card.png" className="cardback" alt="this is the card back" />
                          </List.Item> 
                       )
                   }
@@ -428,24 +428,23 @@ import './style.css';
                         </Grid.Column>
                     </Grid.Row>
                   </Grid>
- 
-                  <List horizontal>
-                    {compPokes}
-                  </List>
-                  <br/>
-
-                  <List ordered horizontal>
-                    {userPokes}
-                  </List>
-                  <br/>
-                {this.state.gameStarted ? true :<Button onClick={ () => {
+                  {this.state.gameStarted ? true :<Button onClick={ () => {
                       this.rand6()
                       this.count()
                       this.setState({
                           gameStarted: true
                       })
                       }}>Start Game</Button>}
-                {this.state.roundEnded ? <Button onClick={this.count}>Start Round</Button>: true}
+                  {this.state.roundEnded ? <Button onClick={this.count}>Start Round</Button>: true}
+                 <br/>
+                  <List horizontal>
+                    {compPokes}
+                  </List>
+                  <br/>
+                  <br/>
+                  <List ordered horizontal>
+                    {userPokes}
+                  </List>
 
             </div>
         )

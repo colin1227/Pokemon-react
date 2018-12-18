@@ -3,6 +3,11 @@
     width: 200px;
 }
 
+.cardback {
+    height: 200px;
+    width: 144px;
+}
+
 li {
     display: inline-flex;
     flex-direction: row;
