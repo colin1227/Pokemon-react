@@ -67,6 +67,7 @@ import './style.css';
         try{
         
             if (this.state.userCards.length > 0) {
+                //user wins round
                 if (this.state.userCards[choiceOfUser].damage > this.state.compCards[computerChoice].damage) {
                    await this.setState({
                         time: 15,
@@ -104,6 +105,7 @@ import './style.css';
                         };
                     };
                 }
+                // computer winns round
                 else if (this.state.userCards[choiceOfUser].damage < this.state.compCards[computerChoice].damage) {
                     await this.setState({
                         time: 15,
@@ -178,11 +180,11 @@ import './style.css';
         })
     }
 
-    gameWinner = (winner) =>{
+    gameWinner = (winPerson) =>{
         clearInterval(this.state.go);
         clearInterval(this.state.compTime);
         this.setState({
-            winner: winner,
+            winner: winPerson,
             compSelected: false
         });
     };
@@ -356,7 +358,7 @@ import './style.css';
                 return;
             }
             else{
-                return this.compareDamage(0, 0)
+                return this.compareDamage(0, this.state.compSubmission)
             }
         }
         catch(err){
